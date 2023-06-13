@@ -183,12 +183,15 @@ module.exports = {
   completed: async (req, res) => {
 
     try {
+
       const dates = new Date();
-console.log(req.params.id);
+      
       const day = dates.getDate();
       const month = dates.getMonth() + 1;
       const year =dates.getFullYear()
+      
       const currentDates = `${year}/${month}/${day}`;
+      
       const deliveryDate = new Date(currentDates)
 
 
