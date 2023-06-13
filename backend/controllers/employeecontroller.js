@@ -184,12 +184,12 @@ module.exports = {
 
     try {
       const dates = new Date();
-
+console.log(req.params.id);
       const day = dates.getDate();
       const month = dates.getMonth() + 1;
-      const currentDates = `${day}/${month}/${year}`;
+      const year =dates.getFullYear()
+      const currentDates = `${year}/${month}/${day}`;
       const deliveryDate = new Date(currentDates)
-
 
 
       await UserJob.findByIdAndUpdate({ _id: req.params.id }, { "Status": "Completed" })
@@ -233,32 +233,32 @@ module.exports = {
   },
   warrantyCheck: async (req, res) => {
     let warrantyDay 
-
-    const result = await UserJob.findOne({ JobId: req.params.id })
+    
+   let result = await UserJob.findOne({ JobId: req.params.id })
 
     if (result && result.Warranty) {
       const dates = new Date();
-
-      const day = dates.getDate();
-      const month = dates.getMonth() + 1;
-      const year = dates.getFullYear();
+      let day = dates.getDate();
+      let month = dates.getMonth() + 1;
+      let year = dates.getFullYear();
 
       // This arrangement can be altered based on how we want the date's format to appear.
 
-      const currentDates = `${day}/${month}/${year}`;
+      let currentDates = `${year}/${month}/${day}`;
+      console.log(currentDates,"////",result.WarrantyDate);
+ 
+      let fromDate = new Date(currentDates)
+      let toDate = new Date(result.WarrantyDate);
 
-
-      const fromDate = new Date(currentDates)
-      const toDate = new Date(result.WarrantyDate);
-
-
+      console.log(fromDate,toDate);
 
 
       function getDifferenceInDays(date1, date2) {
-        const diffInMs = Math.abs(date2 - date1);
+        let diffInMs = Math.abs(date2 - date1);
         return diffInMs / (1000 * 60 * 60 * 24);
       }
       warrantyDay = (182 - (getDifferenceInDays(fromDate, toDate)))
+        console.log(getDifferenceInDays(fromDate, toDate),fromDate,toDate);
 
 
 
