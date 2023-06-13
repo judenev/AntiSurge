@@ -7,7 +7,7 @@ function Servicelist() {
   return (
     <Box sx={{ display: 'flex'}}>
     <AdminHome/>
-    <Box component="main" sx={{ flexGrow: 1, p:10}}>
+    <Box style={{marginTop:"2%"}}  component="main" sx={{ flexGrow: 1, p:10}}>
 
      <Services/>
     </Box>

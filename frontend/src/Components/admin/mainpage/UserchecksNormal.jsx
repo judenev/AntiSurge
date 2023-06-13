@@ -72,7 +72,7 @@ export default function UserchecksNormal() {
 
         return todel
     }
-    console.log("pushed value", todel);
+
     const formik = useFormik({
         initialValues: {
             description: ''
@@ -92,44 +92,79 @@ export default function UserchecksNormal() {
             console.log("kooi", data);
             function convert(str) {
                 var date = new Date(str),
-                    mnth = ("0" + (date.getMonth() + 1)).slice(-2),
-                    day = ("0" + date.getDate()).slice(-2);
+                    mnth = ("" + (date.getMonth() + 1)).slice(-2),
+                    day = ("" + date.getDate()).slice(-2);
                 return [date.getFullYear(), mnth, day].join("/");
             }
 
 
 
-            console.log();
+
             let estiMatedDate = convert(date)
 
-            console.log("estimated date", estiMatedDate);
+
+            // ==========================================================
+
+
+            const dates = new Date();
+
+            const day = dates.getDate();
+            const month = dates.getMonth() + 1;
+            const year = dates.getFullYear();
+
+            // This arrangement can be altered based on how we want the date's format to appear.
+
+            const currentDates = `${year}/${month}/${day}`;
+
+
+            const fromDate = new Date(currentDates)
+            const toDate = new Date(estiMatedDate);
 
 
 
+            function getDifferenceInDays(date1, date2) {
+                const diffInMs = Math.abs(date2 - date1);
+                return diffInMs / (1000 * 60 * 60 * 24);
+            }
+
+
+
+            // ==========================================================
 
             const show = () => {
                 toast.current.show({ severity: 'success', summary: "Ticket Generated" });
             }
 
-            console.log("leave reason", reason.description);
-            console.log("model", selectedCity);
-            let JobReg = {
+
+            const JobReg = {
                 serviceType: "Normal Checks",
                 Estimate: estiMatedDate,
+                Applied: true,
                 Category: selectedCity.name,
                 Model: value,
                 joblist: todel,
                 Instruction: reason.description,
                 userId,
                 userName,
-                Approved: false,
-                Status: 'Applied'
+                Approved: true,
+                Status: 'Applied',
+                total: 0,
+                Estimation: false,
+                Warranty: false,
+                WarrantyDate: "",
+                Attended: "",
+                JobId: "none",
+                completed: false,
+
+
             }
-        
-            axios.post(`${USERBaseURL}jobreg`, JobReg,{headers:{
-                Authorization:`Bearer ${userAuthdata.token.token}`
-            }}).then((resp) => {
-                  console.log("responswe after ",resp);
+
+            axios.post(`${USERBaseURL}jobreg`, JobReg, {
+                headers: {
+                    Authorization: `Bearer ${userAuthdata.token.token}`
+                }
+            }).then((resp) => {
+
                 if (resp.data.Repeat) {
                     console.log(resp.data.Repeat)
                     setErr(true)
@@ -142,7 +177,7 @@ export default function UserchecksNormal() {
                 } else {
 
                     setErr(false)
-                    console.log(resp);
+
                 }
             })
 
@@ -209,7 +244,7 @@ export default function UserchecksNormal() {
 
 
                 </Box>
-                <Box>
+                <Box style={{ marginTop: "2%" }} >
                     <form onSubmit={formik.handleSubmit} className="flex flex-column gap-2 p-5" >
                         <Typography sx={{ color: "#262624", fontStyle: "italic" }}>Please select the both date from this box</Typography>
                         <Box className="card flex d-flex justify-content"  >
@@ -232,8 +267,8 @@ export default function UserchecksNormal() {
                             }}
                         />
 
-                        <Button type="submit" variant="contained" sx={{ marginLeft: "19%", fontSize: "10px", marginTop: "1%" }}>
-                            submit
+                        <Button type="submit" variant="contained" sx={{ marginLeft: "0%", fontSize: "10px", marginTop: "1%", width: "10%" }}>
+                            Submit
                         </Button>
                     </form>
                 </Box>

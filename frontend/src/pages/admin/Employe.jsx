@@ -12,7 +12,7 @@ export default function Employe() {
         
             <Box sx={{ display: 'flex'}}>
                 <AdminHome />
-                <Box component="main" sx={{ flexGrow: 1, p:10,pl:0 }}>
+                <Box style={{marginTop:"2%"}}  component="main" sx={{ flexGrow: 1, p:10,pl:0 }}>
 
                 <Employee/>
                 </Box>

@@ -24,7 +24,7 @@ export default function EmpNormalChecks() {
 ]
   React.useEffect(() => {
     axios.get(`${BaseURL}/normalserviceslist`).then((resp) => {
-      console.log(resp.data);
+   
       setServices(resp.data.normalservices)
  
 
@@ -42,7 +42,7 @@ export default function EmpNormalChecks() {
     }
   
    
-    console.log("pushed value",todel);
+  
   }
  
 

@@ -45,7 +45,7 @@ module.exports={
                 // sending mail
                 const result = await transporter.sendMail(message);
                 console.log({result})
-                return {OTP,result};
+                return {result};
     
         }catch(err){
             console.log(err)

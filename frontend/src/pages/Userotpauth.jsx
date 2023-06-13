@@ -34,21 +34,21 @@ const userlogin = yup.object().shape({
 
 })
 export default function Userotpauth() {
-  // window.location.reload(false)
-  let dispatch = useDispatch()
+ 
+ const dispatch = useDispatch()
   const [logged, setLogged] = React.useState(true)
   const [otp, setOtp] = React.useState(false)
   const [otp2, setOtp2] = React.useState('')
   const [mobnum, setMobnum] = React.useState('')
-  let initialValues = {
+ const initialValues = {
     mob: '',
   }
-  let navigate = useNavigate()
+ const navigate = useNavigate()
   const Submit = (values, props) => {
     setOtp(true)
 
     setMobnum(values.mob)
-    console.log(values.mob);
+ 
     handleChange(values.mob)
 
 
@@ -82,20 +82,19 @@ export default function Userotpauth() {
 
 
   const handleChange = (newValue) => {
-    console.log(newValue);
+
     verify()
-    console.log("kau kuu", mobnum);
-    console.log(`+91${newValue}`);
+ 
     const phoneNumber = `+91${newValue}`
     // setOtp(newValue)
     const appVerifier = window.recaptchaVerifier;
-    console.log(appVerifier, "appVerifier")
+ 
     signInWithPhoneNumber(auth, phoneNumber, appVerifier)
       .then((confirmationResult) => {
         // SMS sent. Prompt user to type the code from the message, then sign the
         // user in with confirmationResult.confirm(code).
         window.confirmationResult = confirmationResult;
-        console.log(confirmationResult);
+  
         // navigate('/Home')
         // ...
       }).catch((error) => {
@@ -120,13 +119,12 @@ export default function Userotpauth() {
   }, []);
   function OtpVerify() {
     window.confirmationResult.confirm(otp2).then(async (resp) => {
-      console.log("aafter otp verify", resp);
-      console.log(resp.user.phoneNumber);
+ 
     }).catch((err) => {
       console.log(err);
     })
   }
-  console.log("suii", otp2)
+
   return (
     <ThemeProvider theme={theme}>
       <div id="recaptcha-container"></div>

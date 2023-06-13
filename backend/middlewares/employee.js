@@ -4,20 +4,28 @@ const asyncHand = require('express-async-handler')
 module.exports = {
     employeesec: asyncHand(async (req, res, next) => {
 
-
-        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    //    console.log("heloo",req.headers);
+       console.log("auth",req.headers.authorization.split(" ")[1])
+       let c= req.headers.authorization.split(" ")[1]
+       console.log(c);
+        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
             try {
+                console.log("1");
 
-              let  token = req.headers.authorization.split(' ')[1];
-              
+              const token =  req.headers.authorization.split(" ")[1];
+                
                  const decoded = jwt.verify(token, process.env.SECRET_KEY);
-                 console.log(decoded,"heyoo");
+             console.log(decoded,"i can");
+          
                  next()
+              
             } catch (err) {
                 console.log(err);
-			
-            res.status(401).json({
+                console.log("2"),
+            res.json({
+              
                 employeelogged: false
+              
             })
 			
             }

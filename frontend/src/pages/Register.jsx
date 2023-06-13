@@ -25,7 +25,8 @@ export default function Register() {
   const [valid, setValid] = React.useState()
   const [userin, setUserin] = React.useState()
   const [usermail, setUsermail] = React.useState()
-  let navigate = useNavigate()
+  const navigate = useNavigate()
+  
   const userRegister = yup.object().shape({
     firstName: yup.string().required("This field is required"),
     lastName: yup.string().required("This field is required"),
@@ -34,7 +35,7 @@ export default function Register() {
     password: yup.string().min(4, "too short password").required('password required'),
     confirmpassword: yup.string().oneOf([yup.ref('password'), null], 'Passwords must match').required()
   })
-  let initialValues = {
+const initialValues = {
     firstname: '',
     lastName: '',
     mob: '',
@@ -54,14 +55,16 @@ export default function Register() {
       confirmpassword: values.confirmpassword
     }
     const isValid = await userRegister.isValid(userVal)
-    console.log(isValid);
+ 
     if (!isValid) {
       setValid(false)
     }
     else {
       setValid(true)
       axios.post(`${USERBaseURL}userreg`, userVal).then((resp) => {
-        console.log(resp);
+        console.log("kollam",resp);
+        axios.post("http://localhost:3001/authenticate", { username:userVal.firstName }).then((r)=>{
+                  }).catch((e) => console.log("Auth Error", e));
         if (resp.data.user) {
           setUserin(true)
         } else {

@@ -20,7 +20,7 @@ import Alert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectAdminAuth, setAdminToken } from '../../redux/features/adminAuthSlice';
-import { Formik, Field, Form, ErrorMessage } from 'formik'
+
 
 
 
@@ -56,7 +56,7 @@ export default function AdminLogin() {
         
       }else{  
         dispatch(setAdminToken(resp.data))
-        navigate('/admin/Home') 
+        navigate('/admin/dash') 
     }})
 
     }

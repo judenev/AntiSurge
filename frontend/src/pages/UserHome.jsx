@@ -19,23 +19,21 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
+
 import Collapse from '@mui/material/Collapse';
-import StarBorder from '@mui/icons-material/StarBorder';
+
 import { useDispatch, useSelector } from 'react-redux';
-import { Button } from '@mui/material';
-import { adminAuthReducer, deleteAdminToken } from '../redux/features/adminAuthSlice';
-import { selectAdminAuth } from '../redux/features/adminAuthSlice';
-import { createSerializableStateInvariantMiddleware } from '@reduxjs/toolkit';
-import Services from '../Components/admin/mainpage/Services';
+
+
 import { useNavigate } from 'react-router-dom';
-import Employee from '../Components/admin/mainpage/Employee';
-import Ongoingjobs from '../Components/admin/mainpage/Ongoingjobs';
+
 import EastIcon from '@mui/icons-material/East';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { Avatar, Button, ToggleButton } from '@mui/material';
 
 import CircleIcon from '@mui/icons-material/Circle';
 import { deleteUserToken, selectUserAuth } from '../redux/features/userAuthSlice';
+import img from './adminLogin/misc/SURGE1.jpg'
 
 const drawerWidth = 240;
 
@@ -89,7 +87,7 @@ export default function UserHome() {
   const dispatch = useDispatch()
   const userData = useSelector(selectUserAuth)
 
-  console.log("token is ",userData.token.data.firstName);
+  console.log("token is ", userData.token.data.firstName);
   const userN = userData.token.data.firstName
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -110,10 +108,11 @@ export default function UserHome() {
     navigate('/')
 
   }
+  
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+      <AppBar position="fixed" sx={{ background: '#6e6302' }} open={open}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -125,9 +124,9 @@ export default function UserHome() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-           {`Welcome  ${userN} `}
+            {`Welcome  ${userN} `}
           </Typography>
-
+          <Avatar src={img} sx={{ marginRight: '10px', width: '80px !important', height: '80px !important' }} />
         </Toolbar>
 
       </AppBar>
@@ -171,7 +170,7 @@ export default function UserHome() {
 
               <Collapse in={open1[index]}>
                 <List component="div" disablePadding>
-                  {[[], ['Normal Checklist', 'Minor Checklist', 'Major Checklist'], ['On-Going Jobs']][index].map((text, index1) => (
+                  {[[], ['Normal Checklist', 'Minor Checklist', 'Major Checklist'], ['Current-Jobs']][index].map((text, index1) => (
                     <ListItemButton sx={{ pl: 4 }} onClick={() => {
                       setText(text);
                       if (text == 'Normal Checklist') {
@@ -185,7 +184,7 @@ export default function UserHome() {
                         navigate('/userMajorcheck')
                       }
                       else {
-                        navigate('/alljob')
+                        navigate('/ongoingjob')
                       }
 
 
@@ -209,15 +208,18 @@ export default function UserHome() {
         </List>
         <Divider />
         <List>
-          {['Warranty Check'].map((text, index) => (
+          {['Warranty Check', 'Chats'].map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton onClick={() => {
                 setTextup(text)
                 setRend(text)
-                if (text == 'Adding Services') {
-                  navigate('/services')
-                } else if (text == 'Leave Approval') {
-                  navigate('/empleavelist')
+                if (text == 'Warranty Check') {
+                  navigate('/warrantycheck')
+                } else if (text == 'Chats') {
+
+
+                  navigate('/UserChats')
+
                 } else {
 
                 }
@@ -235,7 +237,7 @@ export default function UserHome() {
         <List>
           <ListItem>
             <ListItemIcon>
-            <LogoutIcon/>
+              <LogoutIcon />
             </ListItemIcon>
 
             <ListItemButton onClick={logout}> <ListItemText primary='Logout' /> </ListItemButton>

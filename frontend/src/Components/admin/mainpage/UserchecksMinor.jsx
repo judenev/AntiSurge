@@ -10,7 +10,7 @@ import FormControl from "@mui/material/FormControl";
 import Tooltip from '@mui/material/Tooltip';
 import { Form, useFormik } from 'formik';
 import { InputTextarea } from 'primereact/inputtextarea';
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { classNames } from 'primereact/utils';
 import { Toast } from 'primereact/toast';
 import { Calendar } from 'primereact/calendar';
@@ -19,31 +19,39 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Box, Typography } from "@mui/material";
 import axios from 'axios';
 import { Dropdown } from 'primereact/dropdown';
-import BaseURL from '../../../Utils/baseUrl';
+import { Messages } from 'primereact/messages';
 import { selectEmpAuth } from '../../../redux/features/employeeAuthSlice';
 import { selectUserAuth } from '../../../redux/features/userAuthSlice';
+import { InputText } from "primereact/inputtext";
+import USERBaseURL from '../../../Utils/userUrl';
+import BaseURL from '../../../Utils/baseUrl';
+export default function UserchecksMinor(){
 
-export default function UserchecksMinor() {
     let userId
     let userName
     const toast = useRef(null);
+    const msgs = useRef(null);
     const userAuthdata = useSelector(selectUserAuth)
     console.log("userdata", userAuthdata.token.data);
-    userId = userAuthdata.token.token._id
+    userId = userAuthdata.token.data._id
     userName = userAuthdata.token.data.firstName
     const [date, setDate] = React.useState(null);
     const [reason, setReason] = React.useState('');
-    let todel = []
+    const [todel, setTodel] = React.useState([])
+    const [value, setValue] = React.useState('');
+    const [err, setErr] = React.useState(false);
+    const [reg, setReg] = React.useState(false)
     const [selectedCity, setSelectedCity] = React.useState(null);
     const [services, setServices] = React.useState([])
     const cities = [
-        { name: 'Motor', code: 'MT' },
-        { name: 'Fan', code: 'FN' },
-        { name: 'Mixi', code: 'MIXI' },
-        { name: 'Table Fan', code: 'TFN' },
+        { name: 'Motor' },
+        { name: 'Fan' },
+        { name: 'Mixi' },
+        { name: 'Table Fan' },
 
     ]
-    React.useEffect(() => {
+
+    useEffect(() => {
         axios.get(`${BaseURL}/minorserviceslist`).then((resp) => {
             console.log(resp.data);
             setServices(resp.data.minorservices)
@@ -62,15 +70,15 @@ export default function UserchecksMinor() {
 
         }
 
-
-        console.log("pushed value", todel);
+        return todel
     }
+
     const formik = useFormik({
         initialValues: {
             description: ''
         },
         validate: (data) => {
-            console.log(data);
+          
             setReason(data)
             let errors = {};
 
@@ -81,7 +89,7 @@ export default function UserchecksMinor() {
             return errors;
         },
         onSubmit: (data) => {
-            console.log("kooi", data);
+           
             function convert(str) {
                 var date = new Date(str),
                     mnth = ("0" + (date.getMonth() + 1)).slice(-2),
@@ -89,33 +97,54 @@ export default function UserchecksMinor() {
                 return [date.getFullYear(), mnth, day].join("/");
             }
 
-
-
-            console.log();
             let estiMatedDate = convert(date)
-
-            console.log("estimated date", estiMatedDate);
-
-
-
-
             const show = () => {
                 toast.current.show({ severity: 'success', summary: "Ticket Generated" });
             }
 
-            console.log("leave reason", reason.description);
-            console.log("model", selectedCity);
-            let JobReg = {
+          
+           const JobReg = {
+                serviceType: "Minor Checks",
                 Estimate: estiMatedDate,
-
-
+                Applied:true,
+                Category: selectedCity.name,
+                Model: value,
+                joblist: todel,
                 Instruction: reason.description,
                 userId,
                 userName,
-                Approved: false
+                Approved: true,
+                Status: 'Applied',
+                total:0,
+                Estimation:false,
+                Warranty:false,
+                WarrantyDate:"",
+                Attended:"",
+                JobId:"none",
+                completed:false,
+
+
             }
-            console.log("Service Registered", JobReg);
-            // axios.post(`${empUrl}/employleave`, leave)
+        
+            axios.post(`${USERBaseURL}jobreg`, JobReg,{headers:{
+                Authorization:`Bearer ${userAuthdata.token.token}`
+            }}).then((resp) => {
+                  console.log("responswe after ",resp);
+                if (resp.data.Repeat) {
+                 
+                    setErr(true)
+                    msgs.current.show(
+
+                        { sticky: true, severity: 'error', summary: 'Sorry Same Checks Found', closable: false }
+                    );
+
+
+                } else {
+
+                    setErr(false)
+                    console.log(resp);
+                }
+            })
 
 
 
@@ -127,18 +156,16 @@ export default function UserchecksMinor() {
 
     const isFormFieldInvalid = (name) => !!(formik.touched[name] && formik.errors[name]);
 
-    const getFormErrorMessage = (name) => {
-        return isFormFieldInvalid(name) ? <small className="p-error">{formik.errors[name]}</small> : <small className="p-error">&nbsp;</small>;
-    };
+
 
 
     return (
         <div className="card">
-
+            <Toast ref={toast} />
             <Card title="Minor Checklist" className="card flex">
                 <Box>
                     <FormControl component="fieldset">
-                        <Box sx={{ width: '1000px',display:'flex',justifyContent:'space-between' }}>
+                        <Box sx={{ width: '1000px', display: 'flex', justifyContent: 'space-between' }}>
                             <Box >
                                 <FormLabel sx={{ color: "#262624", fontWeight: '600' }} >Available Checks</FormLabel>
                                 <FormGroup aria-label="position" row>
@@ -153,7 +180,7 @@ export default function UserchecksMinor() {
                                                     label={data.title}
                                                     labelPlacement="end"
                                                     onClick={(e) => {
-                                                        deleteservice(e.target.value, e.target.checked)
+                                                        setTodel(deleteservice(e.target.value, e.target.checked))
                                                     }}
                                                 />
                                             </Tooltip>
@@ -167,9 +194,12 @@ export default function UserchecksMinor() {
                             </Box>
                             <Box>
 
-                                <Typography sx={{ color: "#262624", fontWeight: '600' }} color={'#262624'} >Please Select the Product Model</Typography>
+                                {err && <Messages ref={msgs} />}
+                                <Typography sx={{ color: "#262624", fontWeight: '600' }}  >Please Select the Product Category</Typography>
                                 <Dropdown value={selectedCity} onChange={(e) => setSelectedCity(e.value)} options={cities} optionLabel="name"
                                     placeholder="Select Model" className="w-full md:w-14rem mt:5rem" />
+                                <Typography sx={{ color: "#262624", fontWeight: '600' }}  >Please Enter the Product Model</Typography>
+                                <InputText required value={value} onChange={(e) => setValue(e.target.value)} />
                             </Box>
                         </Box>
                     </FormControl>
@@ -179,12 +209,14 @@ export default function UserchecksMinor() {
 
 
                 </Box>
-                <Box>
+                <Box style={{marginTop:"2%"}} >
                     <form onSubmit={formik.handleSubmit} className="flex flex-column gap-2 p-5" >
                         <Typography sx={{ color: "#262624", fontStyle: "italic" }}>Please select the both date from this box</Typography>
-                        <div className="card flex justify-content-center">
+                        <Box className="card flex d-flex justify-content"  >
                             <Calendar required placeholder='Enter the Estimated Date' value={date} onChange={(e) => setDate(e.value)} showButtonBar />
-                        </div>
+
+                        </Box>
+
                         <Typography sx={{ color: "#262624", fontStyle: "italic" }}>Instructions if any:</Typography>
                         <InputTextarea
                             autoResize
@@ -199,8 +231,9 @@ export default function UserchecksMinor() {
                                 formik.setFieldValue('description', e.target.value);
                             }}
                         />
-                        <Button type="submit" variant="contained" sx={{ marginLeft: "19%", fontSize: "10px", marginTop: "1%" }}>
-                            submit
+
+                        <Button type="submit" variant="contained" sx={{ marginLeft: "0%", fontSize: "10px", marginTop: "1%",width:"10%" }}>
+                            Submit
                         </Button>
                     </form>
                 </Box>

@@ -14,22 +14,44 @@ import { Toast } from 'primereact/toast';
 import { Dialog } from 'primereact/dialog';
 import { useNavigate } from 'react-router-dom';
 import Estimation from './Estimation';
+import empUrl from '../../../Utils/empUrl';
+import { selectEmpAuth } from '../../../redux/features/employeeAuthSlice';
+import { useSelector, useDispatch } from 'react-redux'
 
 export default function Nonallocatedjobs() {
   const [visible, setVisible] = useState(false);
   const [visibles, setVisibles] = useState(false);
   const [visible1, setVisible1] = useState(false);
+  const [approved, setAprroved] = useState(false);
   const toast = React.useRef(null);
   const buttonEl = React.useRef(null);
   const [modaldata, setModaldata] = React.useState([])
   const [jobs, setJobs] = React.useState('');
-  const [showjob, setShowjob] =React.useState(false);
+  const [showjob, setShowjob] = React.useState(false);
   const [allocated, setAllocated] = React.useState([])
-const navigate=useNavigate()
+  const navigate = useNavigate()
+  const employedata = useSelector(selectEmpAuth)
+  const toast1 = React.useRef(null);
+  const showError =() => {
+    toast1.current.show({severity:'error', summary: 'Session Expired', detail:'PLease login again', life: 3000});
+}
   async function render() {
-    axios.get(`${USERBaseURL}nonallocated`,).then((resp) => {
-      console.log("resp", resp.data);
-      setAllocated(resp.data.data)
+
+    axios.get(`${empUrl}nonallocated`,{
+      headers: {
+          Authorization: `Bearer ${employedata.token.token}`
+      }
+  }).then((resp) => {
+
+      if( !resp.data.employeelogged){
+        showError()
+      
+      }else{
+
+        setAllocated(resp.data.data)
+      }
+
+
     })
   }
   React.useEffect(() => {
@@ -46,16 +68,17 @@ const navigate=useNavigate()
 
   const reject = () => {
     toast.current.show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-    setShowjob(false) 
+    setShowjob(false)
   };
 
 
   return (
     <div className="card">
       <Toast ref={toast} />
+      <Toast ref={toast1} />
       <ConfirmPopup target={buttonEl.current} visible={visible} onHide={() => setVisible(false)}
         message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle" accept={accept} reject={reject} />
-      <Typography>NON ALLOCATED JOBS</Typography>
+      <Typography style={{marginTop:"2%"}} variant='h4'>NON ALLOCATED JOBS</Typography>
 
       <DataTable value={allocated} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} tableStyle={{ minWidth: '50rem' }}>
 
@@ -68,21 +91,22 @@ const navigate=useNavigate()
         <Column field="_id" header="Viewmore" style={{ width: '18%' }} body={(rowData) => <div className="card flex justify-content-center">
           <Button value={rowData} label="View" icon="pi pi-external-link" onClick={() => {
             setVisibles(true)
-            setModaldata([rowData])
-            console.log("bb", modaldata);
-          }} />
-          <Dialog header="Services" visible={visibles} style={{ width: '40vw' }} onHide={() => setVisibles(false)}>
-            <h3 className='mt-0 mb-2'> Name: {modaldata[0] && modaldata[0].userName}</h3>
-            <h3 className='mt-0'> Job id: {modaldata[0] && modaldata[0]._id}</h3>
+            setModaldata(rowData)
 
-            {modaldata[0] && modaldata[0].jobstatus ?
-              <table className='mx-auto' style={{ borderStyle: 'outset', width: "80%", borderCollapse: 'collapse' }}>
-                <tr style={{ borderStyle: 'outset', padding: "0.5rem" }}>
-                  <th style={{ borderStyle: 'outset', padding: "0.5rem" }}>Job</th>
-                  <th style={{ borderStyle: 'outset', padding: "0.5rem" }}>Status</th>
-                </tr>
-                {Object.keys(modaldata[0].jobstatus).map((job) => <tr style={{ borderStyle: 'outset', padding: "0.5rem" }}><td style={{ borderStyle: 'outset', padding: "0.5rem" }}>{job} </td> <td className='text-center' style={{ borderStyle: 'outset', padding: "0.5rem" }}>{modaldata[0].jobstatus[job]}</td></tr>)}
-              </table>
+          
+          }} />
+          <Dialog header="Services" visible={visibles} style={{ width: '50vw' }} onHide={() => setVisibles(false)}>
+            <h3 className='mt-0 mb-2'> Name: {modaldata && modaldata.userName}</h3>
+            <h3 className='mt-0'> Job id: {modaldata && modaldata._id}</h3>
+
+            {modaldata && modaldata.jobstatus ?
+
+              <DataTable value={modaldata.jobstatus} tableStyle={{ minWidth: '21rem' }}>
+                <Column field="title" header="Job"></Column>
+                <Column field="status" header="Current Status"></Column>
+
+              </DataTable>
+
 
               : ""}
 
@@ -91,21 +115,27 @@ const navigate=useNavigate()
 
         </Column>
         <Column field="Actions" header="Actions" style={{ width: '18%' }} body={(rowData) => <div className="card flex justify-content-center">
-          <Button ref={buttonEl} onClick={() => (setVisible(true),console.log("vv",rowData._id),axios.get(`${USERBaseURL}estimate/${rowData._id}`).then((res)=>{
-            console.log("koi",res.data.data.jobstatus);
+
+
+          <Button ref={buttonEl} onClick={() => (setVisible(true), console.log("vv", rowData._id), axios.get(`${USERBaseURL}estimate/${rowData._id}`).then((res) => {
+         
             setJobs(res.data.data)
-             
-            
-            
+
+
+
           }))} label="Estimate" />
-        
+
         </div>}></Column>
       </DataTable>
-      <Dialog header="Header" visible={visible1} onHide={() => setVisible1(false)}
-                style={{ width: '50vw' }} breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
-                  { showjob? <Estimation {...jobs}/>:''}
-            </Dialog>
-      
+      <Dialog header="Services" visible={visible1} onHide={() => setVisible1(false)}
+        style={{ width: '50vw' }} breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
+        {
+
+       
+
+          showjob ? <Estimation onAuth={(user) => setVisible1(user)}{...jobs} /> : ''}
+      </Dialog>
+
 
     </div >
 

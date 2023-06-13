@@ -4,19 +4,19 @@ import React from 'react'
 function EstimationAdmin() {
   return (
     <div className='card' >
-        <Box>
-            <FormControl >
+      <Box>
+        <FormControl >
 
 
 
-            </FormControl>
-           
-          
+        </FormControl>
 
-        </Box>
-    
-    
-    
+
+
+      </Box>
+
+
+
     </div>
   )
 }

@@ -27,7 +27,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 
 
-let initialValues = {
+const initialValues = {
   title: '',
   Content: '',
 }
@@ -42,9 +42,9 @@ export default function MajorChecklist() {
   let todel = []
   React.useEffect(() => {
     axios.get(`${BaseURL}/majorserviceslist`).then((resp) => {
-      console.log("haveee", resp.data);
+   
       setServices(resp.data.normalservices)
-      console.log("services", services);
+    
 
     })
 
@@ -53,7 +53,7 @@ export default function MajorChecklist() {
 
 
   const Submit = (values, props) => {
-    console.log("for submitee", values);
+
 
     axios.post(`${BaseURL}/majorserviceadd`, values).then(() => {
       setDel([])
@@ -62,7 +62,7 @@ export default function MajorChecklist() {
   }
   const deleteservice = (id, checked) => {
     if (!checked) {
-      let index = todel.indexOf(id)
+     const index = todel.indexOf(id)
       todel.splice(index)
     } else {
       todel.push(id)
@@ -168,7 +168,7 @@ export default function MajorChecklist() {
                       labelPlacement="end"
 
                       onClick={(e) => {
-                        console.log(e.target.checked);
+                
                         deleteservice(e.target.value, e.target.checked)
 
 

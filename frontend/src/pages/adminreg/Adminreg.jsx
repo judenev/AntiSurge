@@ -16,24 +16,8 @@ import { useState } from 'react';
 import * as yup from "yup";
 import axios from 'axios'
 import BaseURL from '../../Utils/baseUrl';
-import Alert from '@mui/material/Alert';
-function Copyright(props) {
 
 
-
-  
-
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const theme = createTheme();
 const adminvalid = yup.object().shape({
@@ -133,7 +117,7 @@ export default function Adminlogin() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
+     
       </Container>
     </ThemeProvider>
   );

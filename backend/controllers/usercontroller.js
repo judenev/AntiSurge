@@ -1,23 +1,23 @@
-let db = require('../utils/connections')
-let collection = require('../utils/collection')
-const { User, UserJob } = require('../schemas/user')
 var bcrypt = require('bcrypt')
 var jwt = require('jsonwebtoken')
+const { User } = require('../Modals/User/UserSchemaModel')
+const { UserJob } = require('../Modals/User/UserJobRegModel')
+const { EmployeeData } = require('../Modals/Admin/EmployeeRegSchemaModal')
+const axios = require('axios')
 module.exports = {
 
     userReg: async (req, res) => {
         return new Promise(async (resolve, reject) => {
-            data.password = await bcrypt.hash(req.body.password, 10)
-            data.confirmpassword = ''
-            console.log('after hashing', data);
-            const newUser = new User(data)
+            req.body.password = await bcrypt.hash(req.body.password, 10)
+            req.body.confirmpassword = ''
 
-            let isUser = await User.findOne({ 'firstName': req.body.firstName })
-            let isEmail = await User.findOne({ 'email': req.body.email })
-            console.log("user already here", isUser, isEmail);
+            const newUser = new User(req.body)
+
+            const isEmail = await User.findOne({ 'email': req.body.email })
+
 
             if (isUser) {
-                console.log("user alreadt found checking");
+
 
                 if (isUser.firstName == req.body.firstName && isUser.lastName == req.body.lastName) {
                     if (isUser.email == req.body.email) {
@@ -39,13 +39,13 @@ module.exports = {
 
                 }
             } else {
-                console.log("new User Registered");
+
                 if (!isEmail) {
 
                     newUser.save()
                     resolve({ user: false })
                 } else {
-                    console.log("kppi");
+
                     resolve({ email: true })
                 }
 
@@ -81,12 +81,12 @@ module.exports = {
     userLogin: async (req, res) => {
         return new Promise(async (resolve, reject) => {
 
-            let userdata = await User.findOne({ email: req.body.email })
+            const userdata = await User.findOne({ email: req.body.email })
             if (userdata) {
 
-                let isUser = await bcrypt.compare(req.body.password, userdata.password)
+                const isUser = await bcrypt.compare(req.body.password, userdata.password)
                 if (isUser) {
-                    let usedata = {
+                    const usedata = {
                         user: true,
                         data: userdata
                     }
@@ -99,9 +99,9 @@ module.exports = {
             }
 
         }).then((resp) => {
-            console.log("userauth", resp);
+
             if (resp.user) {
-                const token = jwt.sign({ user: req.body.email }, process.env.SECRET_KEY, { expiresIn: '50000' });
+                const token = jwt.sign({ user: req.body.email }, process.env.SECRET_KEY, { expiresIn: '500000' });
                 res.json({
                     token,
                     userverified: true,
@@ -116,17 +116,18 @@ module.exports = {
         })
     },
     Userjobreg: async (req, res) => {
-        console.log(req.body);
+
         try {
             const isJob = await UserJob.find({ userId: req.body.userId })
             let count = 0
             if (!isJob.length == 0) {
                 const report = await UserJob.find({ Model: req.body.Model, serviceType: req.body.serviceType })
-                console.log("fdfsdf", report[0]);
+
                 if (report[0]) {
-                    console.log("my");
+
                     res.json({ repeat: true })
                 } else {
+
                     let arr = []
                     req.body.joblist.map((job) => {
                         arr.push(
@@ -135,13 +136,17 @@ module.exports = {
                                 "status": "Recieved"
                             }
                         )
-                        // jobstatus["title"] = job,
-                        //     jobstatus["status"] = "Recieved"
+
                     })
-                    console.log("hhhhhhh", arr);
-                    // req.body.jobstatus = jobstatus
+
+                    req.body.jobstatus = arr
                     const UserjobRegistration = new UserJob(req.body)
-                    UserjobRegistration.save().then((resp) => {
+                    UserjobRegistration.save().then(async (resp) => {
+
+                        const d = ("" + resp.userId)
+                        const jobIdslice = (d.slice(20) + resp.Model)
+
+                        await UserJob.findOneAndUpdate({ _id: resp._id }, { "JobId": jobIdslice })
                         res.json({
                             Repeat: false
                         })
@@ -149,17 +154,28 @@ module.exports = {
                 }
 
             } else {
-                let jobstatus = {
-                    //'painting': 'received'
-                }
 
+
+
+                let arr = []
                 req.body.joblist.map((job) => {
+                    arr.push(
+                        {
+                            "title": job,
+                            "status": "Recieved"
+                        }
+                    )
 
-
-                    jobstatus[job] = "Recieved"
                 })
-                const UserjobRegistration = new UserJob({ ...req.body, jobstatus })
-                UserjobRegistration.save().then((resp) => {
+
+                req.body.jobstatus = arr
+                const UserjobRegistration = new UserJob(req.body)
+                UserjobRegistration.save().then(async (resp) => {
+
+                    const d = ("" + resp.userId)
+                    const jobIdslice = (d.slice(20) + resp.Model)
+
+                    await UserJob.findOneAndUpdate({ _id: resp._id }, { "JobId": jobIdslice })
                     res.json({
                         Repeat: false
                     })
@@ -207,6 +223,90 @@ module.exports = {
 
         } catch (err) {
 
+        }
+
+    },
+    EstApproval: async (req, res) => {
+        const isUser = await UserJob.find({ userId: req.params.id })
+        if (isUser) {
+            res.status(200).json({
+                data: isUser,
+                order: true
+            })
+        } else {
+            res.status(404).json({
+                order: false
+            })
+
+        }
+
+
+    },
+    Approved: async (req, res) => {
+
+        const done = await UserJob.findOneAndUpdate({ _id: req.params.id }, { "Status": "Approved" })
+        await UserJob.findOneAndUpdate({ _id: req.params.id }, { "Approved": false })
+        await UserJob.findOneAndUpdate({ _id: req.params.id }, { "Applied": true })
+        await UserJob.findOneAndUpdate({ _id: req.params.id }, { "Estimation": false })
+        if (done) {
+            res.status(200).json({
+                status: true
+            })
+        } else {
+            res.status(404).json({
+                status: false
+            })
+        }
+        const leastJobAttending = await EmployeeData.aggregate([
+            {
+                $addFields: {
+                    size: { $size: "$AttendingJobs" }
+                }
+            },
+            {
+                $sort: { size: 1 }
+            },
+            {
+                $limit: 1
+            }
+        ])
+        const JobData = {
+            id: req.body.JobId
+        }
+        const empd = leastJobAttending[0]._id
+        await EmployeeData.updateOne({ _id: empd }, { $push: { AttendingJobs: JobData } })
+
+        const EmpData = await EmployeeData.findOne({ _id: empd })
+
+        await UserJob.findOneAndUpdate({ _id: req.params.id }, { "Attended": EmpData.Name })
+
+
+    },
+    Reject: async (req, res) => {
+        const done = await UserJob.findOneAndUpdate({ _id: req.params.id }, { "Status": "Not Approved" })
+        if (done) {
+            res.status(200).json({
+                status: true
+            })
+        }
+
+    },
+
+    auth: async (req, res) => {
+
+        const { username } = req.body;
+        try {
+            const KEY = process.env.CHATENGINE_PRIVATE_KEY
+            console.log("KEY", KEY);
+            const r = await axios.put(
+                "https://api.chatengine.io/users/",
+                { username: username, secret: username, first_name: username },
+                { headers: { "Private-Key": '16438858-333c-4aad-bdc9-74d488ff9f46' } }
+            );
+            console.log("status", r);
+            return res.status(r.status).json(r.data);
+        } catch (e) {
+            return res.status(e.response.status).json(e.response.data);
         }
 
     }

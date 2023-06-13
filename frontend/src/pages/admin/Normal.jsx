@@ -7,7 +7,7 @@ function Normal() {
   return (
     <Box sx={{ display: 'flex'}}>
     <AdminHome/>
-    <Box component="main" sx={{ flexGrow: 1, p: 5,pl:0 }}>
+    <Box style={{marginTop:"2%"}}   component="main" sx={{ flexGrow: 1, p: 5,pl:0 }}>
 
 <Normalchecklist/>
     </Box>

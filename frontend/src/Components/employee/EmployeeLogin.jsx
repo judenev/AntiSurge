@@ -27,7 +27,7 @@ function Copyright(props) {
 
 
 
-  
+
 
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -48,12 +48,12 @@ const adminvalid = yup.object().shape({
   password: yup.string().min(4).max(14).required("Please enter the valid password")
 })
 export default function EmployeeLogin() {
-  const token= useSelector(selectEmpAuth)
- 
-  let dispatch= useDispatch()
+  const token = useSelector(selectEmpAuth)
+
+  let dispatch = useDispatch()
   const [logged, setLogged] = useState(true)
-  const [pass,setPass]=useState(false)
-  const [mail,setMail]=useState(false)
+  const [pass, setPass] = useState(false)
+  const [mail, setMail] = useState(false)
 
   const navigate = useNavigate();
   const handleSubmit = async (event) => {
@@ -61,37 +61,37 @@ export default function EmployeeLogin() {
     const data = new FormData(event.currentTarget);
 
     const empVal = {
-      email: data.get('email'), 
+      email: data.get('email'),
       password: data.get('password'),
     }
-   
+
     let isValid = await adminvalid.isValid(empVal)
-    console.log("jude",isValid);
+  
 
 
     if (isValid) {
-    
-     
-      axios.post(`${empUrl}/emplogin`,empVal).then((resp)=>{
 
-  
-        if(!resp.data.employeelogged){
-            setLogged(false)
-        }else{
- 
-            dispatch(setEmployeeToken(resp.data))
-         
-            navigate('/employee/home')
+
+      axios.post(`${empUrl}/emplogin`, empVal).then((resp) => {
+
+
+        if (!resp.data.employeelogged) {
+          setLogged(false)
+        } else {
+
+          dispatch(setEmployeeToken(resp.data))
+
+          navigate('/employee/home')
         }
-      
+
       })
 
-    }else{
+    } else {
       setPass(true)
       setMail(true)
     }
   };
- 
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs" >
@@ -109,11 +109,11 @@ export default function EmployeeLogin() {
 
           </Avatar>
           <Typography component="h1" variant="h5">
-            Log into Anti- Employee Panel
+            Log into Anti-Surge Employee Panel
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-              {logged ? '': <Alert severity="error"> Sorry Employee Not Found !</Alert>}
-              {mail ? <Alert severity="error"> Not a valid mail !</Alert>:'' }
+            {logged ? '' : <Alert severity="error"> Sorry Employee Not Found !</Alert>}
+            {mail ? <Alert severity="error"> Not a valid mail !</Alert> : ''}
             <TextField
               margin="normal"
               required
@@ -124,7 +124,7 @@ export default function EmployeeLogin() {
               autoComplete="email"
               autoFocus
             />
-             {pass ? <Alert severity="error"> Password not correct !</Alert>:'' }
+            {pass ? <Alert severity="error"> Password not correct !</Alert> : ''}
             <TextField
               margin="normal"
               required
@@ -135,8 +135,8 @@ export default function EmployeeLogin() {
               id="password"
               autoComplete="current-password"
             />
-            
-           
+
+
             <Button
               type="submit"
               fullWidth
@@ -151,11 +151,11 @@ export default function EmployeeLogin() {
                   Forgot password?
                 </Link>
               </Grid>
-           
+
             </Grid>
           </Box>
         </Box>
-      
+
       </Container>
     </ThemeProvider>
   );

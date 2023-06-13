@@ -26,9 +26,10 @@ const checklist = yup.object().shape({
   Name: yup.string().required("This field is required"),
   Username: yup.string().email("Enter a valid email").required("This field is required"),
   Password: yup.string().min(4, "too short password").required('password required'),
+  Mob: yup.number().min(999999999, "less than 10 numbers").max(12345678900, "Number Not Valid").required(),
   Content: yup.string().required(),
-  Switch:yup.boolean()
- 
+  Switch: yup.boolean()
+
 })
 export default function Employee() {
   const [aval, setAval] = React.useState(false);
@@ -37,35 +38,27 @@ export default function Employee() {
     Username: '',
     Password: '',
     Content: '',
-    Availability:false,
+    Mob: '',
+    Availability: false,
   }
   const [services, setServices] = React.useState([])
   const [age, setAge] = React.useState("");
-  const[rel,setRel]=React.useState(false);
+  const [rel, setRel] = React.useState(false);
   const [del, setDel] = React.useState([])
   const [open, setOpen] = React.useState(false);
 
   let todel = []
 
-  React.useEffect(() => {
-    axios.get(`${BaseURL}/minorserviceslist`).then((resp) => {
-      console.log(resp.data);
-      setServices(resp.data.minorservices)
-      console.log("services", services);
 
-    })
-
-
-  }, [])
 
   const label = { inputProps: { 'aria-label': 'Switch demo' } };
   const Submit = (values, props) => {
-    console.log("for submitee", values);
+
 
     setOpen(true);
     axios.post(`${BaseURL}/employeeadd`, values).then((response) => {
-      console.log(response);
-        setRel(!false)
+
+      setRel(!false)
     })
 
   }
@@ -89,14 +82,9 @@ export default function Employee() {
     }
 
 
-    console.log("pushed value", todel);
-  }
-  const deleteconfirm = () => {
-    axios.post(`${BaseURL}/minorservicedelete`, todel).then(() => {
-      setDel([])
-    })
 
   }
+
 
 
 
@@ -200,6 +188,28 @@ export default function Employee() {
                           fontWeight: 700
                         }}
                       >
+                        Mob
+                      </InputLabel>
+                    </Grid>
+                    <Grid item xs={12} sm={10}>
+                      < Field as={TextField}
+                        id="Mob"
+                        label="Contact Number"
+                        name="Mob"
+
+
+                        rows={4}
+                        helperText={<ErrorMessage name="Mob" />}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={2}>
+                      <InputLabel
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          fontWeight: 700
+                        }}
+                      >
                         Qualification
                       </InputLabel>
                     </Grid>
@@ -221,20 +231,20 @@ export default function Employee() {
                           fontWeight: 700
                         }}
                       >
-                     Availability
+                        Availability
                       </InputLabel>
                     </Grid>
                     <Grid item xs={12} sm={10}>
-                      < Field as ={Switch} {...label} 
-                      name ="Availability"
-                     value={props.values.Switch}
-                  
-                     onValueChange={value =>
-                      props.setFieldValue('switch', true)
-                    }
+                      < Field as={Switch} {...label}
+                        name="Availability"
+                        value={props.values.Switch}
+
+                        onValueChange={value =>
+                          props.setFieldValue('switch', true)
+                        }
                       />
-                    
-                     
+
+
                     </Grid>
 
 

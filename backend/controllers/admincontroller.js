@@ -1,23 +1,29 @@
 
 
-const { Adminservice, Admin, EmployeeData } = require('../schemas/admin');
+
 var bcrypt = require('bcrypt');
-const { Empleave } = require('../schemas/employee');
+
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer');
 const { emailSender } = require('./mailcontroller');
+const { Admin } = require('../Modals/Admin/AdminSchemaModal');
+const { Adminservice } = require('../Modals/Admin/ServiceSchemaModal');
+const { EmployeeData } = require('../Modals/Admin/EmployeeRegSchemaModal');
+const { Empleave } = require('../Modals/Employee/EmployeeLeaveModal');
+const { UserEstimation } = require('../Modals/Admin/UserEstimationModel');
+const { UserJob } = require('../Modals/User/UserJobRegModel');
 
 module.exports = {
 
 
     adminlogin: async (req, res) => {
 
-        console.log("admincontroller", req.body);
+
 
         pass = await bcrypt.hash(req.body.password, 10)
 
         const isAdmin = await Admin.findOne({ email: req.body.email })
-        let AdminStatus = await bcrypt.compare(req.body.password, isAdmin.password)
+        const AdminStatus = await bcrypt.compare(req.body.password, isAdmin.password)
 
         let Adminstatus = false
 
@@ -25,12 +31,12 @@ module.exports = {
             Adminstatus = true
         } else {
             Adminstatus
-            //   await Admin.create({...data,password:pass})
+
         }
 
         if (Adminstatus) {
-            let token = jwt.sign({ admin: req.body.email }, process.env.SECRET_KEY, { expiresIn: '5000' });
-            console.log(token);
+            const token = jwt.sign({ admin: req.body.email }, process.env.SECRET_KEY, { expiresIn: '500000' });
+
             res.json({
                 status: "success",
                 message: "admin verified",
@@ -55,7 +61,7 @@ module.exports = {
 
 
         return new Promise((resolve, reject) => {
-            let obj = {
+            const obj = {
                 title: req.body.title,
                 Content: req.body.Content,
                 serviceType: 'Minorchecklist'
@@ -95,11 +101,11 @@ module.exports = {
 
     addnormalservice: async (req, res) => {
         try {
-            let obj = {
+            const obj = {
                 title: req.body.title,
                 Content: req.body.Content,
                 serviceType: 'Normalchecklist',
-                status:'Recieved',
+                status: 'Recieved',
             }
             const addservice = new Adminservice(obj)
             addservice.save();
@@ -130,11 +136,11 @@ module.exports = {
     },
     minordelete: async (req, res) => {
         try {
-            console.log(req.body);
+
             const servicelist = await Adminservice.find({ 'serviceType': 'Minorchecklist' })
             if (servicelist) {
                 req.body.map(async (id) => {
-                    console.log("todelete", id);
+
                     await Adminservice.deleteOne({ _id: id })
 
                 })
@@ -177,7 +183,7 @@ module.exports = {
         try {
             const servicelist = await Adminservice.find({ 'serviceType': 'Majorchecklist' })
 
-            console.log("majorservice list", servicelist);
+
             if (!servicelist) {
                 res.json({
                     normalservices: ["No service Added"]
@@ -199,12 +205,12 @@ module.exports = {
     },
     addmajorservice: (req, res) => {
         try {
-            let obj = {
+            const obj = {
                 title: req.body.title,
                 Content: req.body.Content,
                 serviceType: 'Majorchecklist'
             }
-            console.log("backenf", obj);
+
             const addservice = new Adminservice(obj)
             addservice.save();
 
@@ -223,7 +229,7 @@ module.exports = {
             const servicelist = await Adminservice.find({ 'serviceType': 'Majorchecklist' })
             if (servicelist) {
                 req.body.map(async (id) => {
-                    console.log("majordelete", id);
+
                     await Adminservice.deleteOne({ _id: id })
                     res.json({
                         message: "service deleted"
@@ -260,18 +266,18 @@ module.exports = {
     },
 
     employeereg: async (req, res) => {
-        console.log("before mail",req.body);
+
         emailSender(req.body)
         try {
             req.body.Password = await bcrypt.hash(req.body.Password, 10)
             const isEmployee = await EmployeeData.findOne({ 'Username': req.body.Username })
 
             if (!isEmployee) {
-             
-              
+
+
                 const emp = new EmployeeData(req.body)
                 emp.save()
-                console.log(emp, "asdasdasd");
+
                 res.json({
                     empadd: false
                 })
@@ -286,15 +292,23 @@ module.exports = {
 
             console.log(err);
         }
-       
 
+
+    },
+    empdelete: async (req, res) => {
+        try {
+            const empdel = await EmployeeData.deleteOne({ _id: req.params.id })
+            console.log(empdel, "deleted emp");
+        } catch (err) {
+            console.log(err);
+        }
     },
 
 
     empstatusupdate: async (req, res) => {
         try {
             const isEmployee = await EmployeeData.findOneAndUpdate({ _id: req.body.empid }, { Availability: req.body.status })
-            console.log(isEmployee);
+
             res.json({
                 resp: true
             })
@@ -355,9 +369,148 @@ module.exports = {
         // Preview only available when sending through an Ethereal account
         console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
         // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-    }
+    },
 
-    
+    empChangePass: async (req, res) => {
+
+        password = await bcrypt.hash(req.body.password, 10)
+
+        try {
+            newmob = req.body.Mob.slice(3)
+            console.log("new mobasda", newmob);
+            const isEmployee = await EmployeeData.findOneAndUpdate({ Mob: newmob }, { Password: password })
+            if (isEmployee) {
+
+                res.status(200).json({
+                    change: true,
+                    message: "Password Changed Succesfully"
+                })
+            } else {
+                res.status(400).json({
+                    change: false,
+                    message: "Employee Not Found"
+                })
+            }
+
+        }
+        catch (err) {
+            console.log(err);
+
+        }
+
+
+
+    },
+    customerEstimation: async (req, res) => {
+
+
+        try {
+
+
+
+
+
+            const reg = await UserJob.findOneAndUpdate({ "userId": req.body.userid }, { "jobstatus": req.body.products })
+            await UserJob.findOneAndUpdate({ "userId": req.body.userid }, { "total": req.body.tot })
+            await UserJob.findOneAndUpdate({ "_id": req.body.jobid }, { "Status": "Estimation Generated" })
+            await UserJob.findOneAndUpdate({ "_id": req.body.jobid }, { "Estimation": true })
+
+        } catch (err) {
+            console.log(err);
+        }
+
+    },
+    nonallocated: async (req, res) => {
+        try {
+            const Nonallocated = await UserJob.find({}).where({
+                'Approved': false,
+            })
+            res.status(200).json({
+                data: Nonallocated
+            })
+
+        } catch (err) {
+
+        }
+    },
+    Allchecks: async (req, res) => {
+        try {
+            const aggregatorOpts = [{
+                $group: {
+                    _id: "$serviceType",
+                    count: { $sum: 1 }
+                }
+            }]
+            const data = await UserJob.aggregate(aggregatorOpts).exec()
+
+            if (data) {
+                res.status(200).json({
+                    data,
+                    found: true
+                })
+            } else {
+                res.status(404).json({
+
+                    found: false
+                })
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    },
+    jobstatuscheck: async (req, res) => {
+        try {
+            const aggregatorOpts = [{
+                $group: {
+                    _id: "$Status",
+                    count: { $sum: 1 }
+                }
+            }]
+            const data = await UserJob.aggregate(aggregatorOpts).exec()
+
+            if (data) {
+                res.status(200).json({
+                    data,
+                    found: true
+                })
+            } else {
+                res.status(404).json({
+
+                    found: false
+                })
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    },
+    jobcategory: async (req, res) => {
+        try {
+            const aggregatorOpts = [{
+                $group: {
+                    _id: "$Category",
+                    count: { $sum: 1 }
+                }
+            }]
+            const data = await UserJob.aggregate(aggregatorOpts).exec()
+
+            if (data) {
+                res.status(200).json({
+                    data,
+                    found: true
+                })
+            } else {
+                res.status(404).json({
+
+                    found: false
+                })
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    },
+
+
+
 
 }
 

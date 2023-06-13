@@ -195,21 +195,25 @@ console.log("samru",token);
 
               <Collapse in={open1[index]}>
                 <List component="div" disablePadding>
-                  {[['On-Going jobs', 'non-Allocated jobs', 'All Jobs'], ['Adding Services', 'Warranty Check']][index].map((text, index1) => (
+                  {[['On-Going jobs', 'non-Allocated jobs', 'All Jobs','Completed Jobs'], ['Adding Services', 'Warranty Check']][index].map((text, index1) => (
                     <ListItemButton sx={{ pl: 4 }} onClick={() => {
                       setText(text);
                       if (text == 'On-Going jobs') {
-                        navigate('/ongoingjob')
+                        navigate('/employee/ongoingjob')
                       } else if (text == 'non-Allocated jobs') {
-                        navigate('/nonallocated')
+                        navigate('/employee/nonallocated')
                       } else if (text == 'Add Employee') {
                         navigate('/addemp')
                       }
                       else if (text == 'Show Employee') {
                         navigate('/showemp')
                       }
+                      else if (text == 'Completed Jobs') {
+                        navigate('/employee/Completejobs')
+                      }
+                      
                       else {
-                        navigate('/alljob')
+                        navigate('/employee/alljob')
                       }
 
 
@@ -239,7 +243,7 @@ console.log("samru",token);
                 setTextup(text)
                 setRend(text)
                 if (text == 'Warranty Check') {
-                  navigate('./')
+                  navigate('/employee/warranty')
                 }else if(text=='Chats'){
                   navigate('/employee/Chats')
                 }

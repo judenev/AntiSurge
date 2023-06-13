@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom'
 import EmployeeHome from '../../../pages/employee/EmployeeHome'
 import EmpHome from '../mainpage/EmpHome'
 import EmployeeLogin from '../../employee/EmployeeLogin'
+import EmpAlljobs from '../../employee/EmpAlljobs'
 
 function EmployeeValidate() {
   const token=useSelector(selectEmpAuth)
@@ -27,7 +28,7 @@ function EmployeeValidate() {
   return (
     <>
 
-  <EmpHome/>
+  <EmpAlljobs/>
     </>
   )
  }

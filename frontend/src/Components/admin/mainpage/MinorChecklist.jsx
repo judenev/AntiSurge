@@ -27,7 +27,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 
 
-let initialValues = {
+const initialValues = {
   title: '',
   Content: '',
 }
@@ -42,9 +42,9 @@ export default function MinorChecklist() {
   let todel = []
   React.useEffect(() => {
     axios.get(`${BaseURL}/minorserviceslist`).then((resp) => {
-      console.log(resp.data);
+ 
       setServices(resp.data.minorservices)
-      console.log("services", services);
+
 
     })
 
@@ -53,7 +53,7 @@ export default function MinorChecklist() {
 
 
   const Submit = (values, props) => {
-    console.log("for submitee", values);
+
 
     axios.post(`${BaseURL}/minorserviceadd`, values).then(() => {
       setDel([])
@@ -70,7 +70,7 @@ export default function MinorChecklist() {
     }
 
 
-    console.log("pushed value", todel);
+ 
   }
   const deleteconfirm = () => {
     axios.post(`${BaseURL}/minorservicedelete`, todel).then(() => {
@@ -168,7 +168,7 @@ export default function MinorChecklist() {
                       labelPlacement="end"
 
                       onClick={(e) => {
-                        console.log(e.target.checked);
+                     
                         deleteservice(e.target.value, e.target.checked)
 
 

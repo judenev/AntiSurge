@@ -27,7 +27,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 
 
-let initialValues = {
+const initialValues = {
   title: '',
   Content: '',
 }
@@ -42,7 +42,7 @@ export default function Normalchecklist() {
   const [age, setAge] = React.useState("");
   React.useEffect(() => {
     axios.get(`${BaseURL}/normalserviceslist`).then((resp) => {
-      console.log(resp.data);
+
       setServices(resp.data.normalservices)
  
 
@@ -55,13 +55,13 @@ export default function Normalchecklist() {
   const Submit = (values, props) => {
    
     
-    console.log("for submitee", values);
+
     axios.post(`${BaseURL}/normalserviceadd`, values).then(() => {
 
     })
 
   }
-  console.log("services", services);
+
   const deleteservice=(id,checked)=>{
     if(!checked){
       let index = todel.indexOf(id)
@@ -72,7 +72,7 @@ export default function Normalchecklist() {
     }
   
    
-    console.log("pushed value",todel);
+
   }
   const deleteconfirm=()=>{
     axios.post(`${BaseURL}/normalservicedelete`, todel).then(() => {

@@ -13,8 +13,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import img from './adminLogin/misc/SURGE1.jpg'
-import {  useNavigate } from 'react-router-dom';
-import { Formik ,Field, Form, ErrorMessage} from 'formik';
+import { useNavigate } from 'react-router-dom';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as yup from "yup";
 import axios from 'axios';
 import USERBaseURL from '../Utils/userUrl';
@@ -25,32 +25,32 @@ import { setUserToken } from '../redux/features/userAuthSlice';
 const theme = createTheme();
 const userlogin = yup.object().shape({
   email: yup.string().email("Enter a valid email").required("This field is required"),
-    password: yup.string().min(4, "too short password").required('password required'),
+  password: yup.string().min(4, "too short password").required('password required'),
 })
 export default function UserLogin() {
-  let dispatch= useDispatch()
-  const [logged, setLogged] =React.useState(true)
-  let initialValues = {
+  const dispatch = useDispatch()
+  const [logged, setLogged] = React.useState(true)
+  const initialValues = {
     email: '',
     password: '',
   }
   let navigate = useNavigate()
-  const Submit = (values,props) => {
-    axios.post(`${USERBaseURL}userlogin`,values).then((resp)=>{
-    if(!resp.data.userverified){
-      setLogged(false)
-    }else{
-      dispatch(setUserToken(resp.data))
-      navigate('/Home')
-    }
+  const Submit = (values, props) => {
+    axios.post(`${USERBaseURL}userlogin`, values).then((resp) => {
+      if (!resp.data.userverified) {
+        setLogged(false)
+      } else {
+        dispatch(setUserToken(resp.data))
+        navigate('/Home')
+      }
 
 
     })
-  
-    
-    
-    }
-return (
+
+
+
+  }
+  return (
     <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
@@ -91,62 +91,63 @@ return (
 
             <Formik initialValues={initialValues} validationSchema={userlogin} onSubmit={Submit}>
               {
-                (props)=>(
+                (props) => (
                   <Form>
-                <Box noValidate sx={{ mt: 1 }}>
-                  < Field as ={TextField}
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    name="email"
+                    <Box noValidate sx={{ mt: 1 }}>
+                      < Field as={TextField}
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="email"
+                        label="Email Address"
+                        name="email"
 
-                    autoComplete="false"
-                    helperText={<ErrorMessage name="email" />}
-                  />
-                  < Field as= {TextField} 
-                    margin="normal"
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-             
-                    helperText={<ErrorMessage name="password" />}
-                  />
+                        autoComplete="false"
+                        helperText={<ErrorMessage name="email" />}
+                      />
+                      < Field as={TextField}
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Password"
+                        type="password"
+                        id="password"
+                        autoComplete="current-password"
 
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2, background: 'black' }}
-                  >
-                    Sign In
-                  </Button>
-                  <Grid container>
-                    <Grid item xs>
-                      <Link onClick={()=>{
-                        navigate('/otp')}}  sx={{ color: 'black' }}>
-                        Signin with OTP
-                      </Link>
-                    </Grid>
-                    <Grid item>
-                      <Link onClick={() => {
-                        navigate('/register')
-                      }} sx={{ color: 'black' }}>
-                        {"Don't have an account? Sign Up"}
-                      </Link>
-                    </Grid>
-                  </Grid>
+                        helperText={<ErrorMessage name="password" />}
+                      />
 
-                </Box>
-              </Form>
+                      <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2, background: 'black' }}
+                      >
+                        Sign In
+                      </Button>
+                      <Grid container>
+                        <Grid item xs>
+                          <Link onClick={() => {
+                            navigate('/otp')
+                          }} sx={{ color: 'black' }}>
+                            Signin with OTP
+                          </Link>
+                        </Grid>
+                        <Grid item>
+                          <Link onClick={() => {
+                            navigate('/register')
+                          }} sx={{ color: 'black' }}>
+                            {"Don't have an account? Sign Up"}
+                          </Link>
+                        </Grid>
+                      </Grid>
+
+                    </Box>
+                  </Form>
                 )
               }
-              
+
             </Formik>
 
 

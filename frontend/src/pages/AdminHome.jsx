@@ -19,22 +19,20 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
+
 import Collapse from '@mui/material/Collapse';
-import StarBorder from '@mui/icons-material/StarBorder';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@mui/material';
 import { adminAuthReducer, deleteAdminToken } from '../redux/features/adminAuthSlice';
 import { selectAdminAuth } from '../redux/features/adminAuthSlice';
-import { createSerializableStateInvariantMiddleware } from '@reduxjs/toolkit';
-import Services from '../Components/admin/mainpage/Services';
+
 import { useNavigate } from 'react-router-dom';
-import Employee from '../Components/admin/mainpage/Employee';
-import Ongoingjobs from '../Components/admin/mainpage/Ongoingjobs';
+
 import EastIcon from '@mui/icons-material/East';
-
+import { Avatar, ToggleButton } from '@mui/material';
 import CircleIcon from '@mui/icons-material/Circle';
-
+import img from '../../src/Components/admin/mainpage/misc/SURGE1.jpg'
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -111,7 +109,7 @@ export default function AdminHome() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+      <AppBar sx={{ background: 'grey' }} position="fixed" open={open}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -122,9 +120,20 @@ export default function AdminHome() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Anti-Surge Administration Panel
-          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', height: '100%', width: '100%' }}>
+
+            <Typography variant="h6" noWrap component='div' >
+              Anti-Surge Administration Panel
+            </Typography>
+
+            <Typography sx={{ textAlign: 'end', display: "flex", }} onClick={logout} variant="h6" noWrap >
+
+              <Avatar src={img} sx={{ marginRight: '10px' }} />
+              <Button onClick={logout} sx={{ backgroundColor: "red" }} variant="contained" size="small">
+                Logout
+              </Button>
+            </Typography>
+          </Box>
 
         </Toolbar>
 
@@ -153,6 +162,10 @@ export default function AdminHome() {
             <>
               <ListItemButton onClick={() => {
 
+                if (text == 'Dashboard') {
+                  navigate('/admin/dash')
+                }
+
                 setOpen2(!open2)
                 let open_array = open1
                 open_array[index] = !open_array[index]
@@ -164,26 +177,32 @@ export default function AdminHome() {
                   <InboxIcon />
                 </ListItemIcon>
                 <ListItemText primary={text} />
-                {open1[index] ? <CircleIcon/> : <ExpandLess />}
+                {open1[index] ? <CircleIcon /> : <ExpandLess />}
               </ListItemButton>
 
               <Collapse in={open1[index]}>
                 <List component="div" disablePadding>
-                  {[[], ['On-Going jobs', 'non-Allocated jobs', 'All Jobs'], ['Add Employee','Show Employee']][index].map((text, index1) => (
+                  {[[], ['On-Going jobs', 'non-Allocated jobs', 'All Jobs', 'Completed Jobs'], ['Add Employee', 'Show Employee', 'Employee Monitoring']][index].map((text, index1) => (
                     <ListItemButton sx={{ pl: 4 }} onClick={() => {
                       setText(text);
                       if (text == 'On-Going jobs') {
-                        navigate('/ongoingjob')
+                        navigate('/admin/ongoingjob')
                       } else if (text == 'non-Allocated jobs') {
-                        navigate('/nonallocated')
-                      }else if(text =='Add Employee'){
+                        navigate('/admin/nonallocated')
+                      } else if (text == 'Add Employee') {
                         navigate('/addemp')
                       }
-                      else if(text =='Show Employee'){
+                      else if (text == 'Show Employee') {
                         navigate('/showemp')
                       }
-                      else{
-                        navigate('/alljob')
+                      else if (text == 'Employee Monitoring') {
+                        navigate('/admin/employeemonitor')
+                      }
+                      else if (text == 'Completed Jobs') {
+                        navigate('/admin/completejobs')
+                      }
+                      else {
+                        navigate('/admin/alljob')
                       }
 
 
@@ -191,8 +210,8 @@ export default function AdminHome() {
 
                     }}>
                       <ListItemIcon>
-                       
-                       <EastIcon/>
+
+                        <EastIcon />
                       </ListItemIcon>
                       <ListItemText primary={text} />
                     </ListItemButton>
@@ -207,16 +226,18 @@ export default function AdminHome() {
         </List>
         <Divider />
         <List>
-          {['Leave Approval','Adding Services', 'Warranty Check'].map((text, index) => (
+          {['Leave Approval', 'Adding Services', 'Warranty Check'].map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton onClick={() => {
                 setTextup(text)
                 setRend(text)
                 if (text == 'Adding Services') {
-                  navigate('/services')
-                }else if(text=='Leave Approval'){
-                    navigate('/empleavelist')
-                }else{
+                  navigate('/admin/services')
+                } else if (text == 'Leave Approval') {
+
+                  navigate('/admin/empleavelist')
+                } else {
+                  navigate('/admin/warranty')
 
                 }
               }} >
@@ -231,11 +252,11 @@ export default function AdminHome() {
           ))}
         </List>
 
-        <ListItemButton onClick={logout}> <ListItemText primary='Logout' /> </ListItemButton>
+
 
       </Drawer>
       <Main open={open} >
-        
+
         {
 
         }
