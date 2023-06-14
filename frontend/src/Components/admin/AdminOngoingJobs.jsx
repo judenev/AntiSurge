@@ -1,16 +1,19 @@
 import { Box } from '@mui/system'
 import React from 'react'
-import Alljobstatus from '../../Components/admin/mainpage/Alljobstatus'
-
-
-
 import AdminHome from '../../pages/AdminHome'
-
-import EmployeeAlljobs from './mainpage/EmployeeAlljobs'
 import EmpOngoingJobs from './mainpage/EmpOngoingJobs'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { selectAdminAuth } from '../../redux/features/adminAuthSlice'
 
 export default function AdminOngoingJobs() {
-    return (
+const navigate =useNavigate()
+const token =useSelector(selectAdminAuth)
+
+  React.useEffect(() => {
+   
+    if (token.token){
+        return (
         
             <Box sx={{ display: 'flex'}}>
                 <AdminHome/>
@@ -22,5 +25,11 @@ export default function AdminOngoingJobs() {
     
     
     )
+    }else{
+      navigate('/admin')
+    }
+   
+  }, [])
+    
 }
 

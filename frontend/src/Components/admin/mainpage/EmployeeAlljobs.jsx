@@ -4,15 +4,15 @@ import { DataTable } from 'primereact/datatable';
 
 import { Column } from 'primereact/column';
 import axios from 'axios';
-import { Button } from 'primereact/button';
+
 import { ConfirmPopup } from 'primereact/confirmpopup';
-import { ToggleButton } from 'primereact/togglebutton';
+
 import { Typography } from '@mui/material';
-import { useSelector, useDispatch } from 'react-redux'
-import USERBaseURL from '../../../Utils/userUrl';
+import { useSelector,  } from 'react-redux'
+
 import { Toast } from 'primereact/toast';
 import { Dialog } from 'primereact/dialog';
-import { useNavigate } from 'react-router-dom';
+
 import Estimation from './Estimation';
 import empUrl from '../../../Utils/empUrl';
 import { selectEmpAuth } from '../../../redux/features/employeeAuthSlice';
@@ -20,16 +20,16 @@ import { selectEmpAuth } from '../../../redux/features/employeeAuthSlice';
 export default function EmployeeAlljobs() {
   const employedata = useSelector(selectEmpAuth)
   const [visible, setVisible] = useState(false);
-  const [visibles, setVisibles] = useState(false);
+ 
   const [visible1, setVisible1] = useState(false);
-  const [approved, setAprroved] = useState(false);
+
   const toast = React.useRef(null);
   const buttonEl = React.useRef(null);
-  const [modaldata, setModaldata] = React.useState([])
+
   const [jobs, setJobs] = React.useState('');
   const [showjob, setShowjob] = React.useState(false);
   const [allocated, setAllocated] = React.useState([])
-  const navigate = useNavigate()
+
   const [page, setPage] = useState(0);
   const [totalRecords, setTotalRecords] = useState(20);
 
@@ -39,7 +39,7 @@ export default function EmployeeAlljobs() {
           Authorization: `Bearer ${employedata.token.token}`
       }
   }).then((resp) => {
-      console.log("resp", resp.data.data[0].jobstatus[0]);
+     
       setAllocated(resp.data.data)
       setTotalRecords(resp.data.count)
 

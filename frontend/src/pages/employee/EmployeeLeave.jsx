@@ -1,23 +1,39 @@
 import React from 'react'
 
 import { Box } from '@mui/system'
-import AdminHome from '../AdminHome'
-import MajorChecklist from '../../Components/admin/mainpage/MajorChecklist'
 
-import Dummy from '../../Components/admin/mainpage/Dummy'
 import EmpHome from '../../Components/admin/mainpage/EmpHome'
 import Empleave from '../../Components/admin/mainpage/EmpLeave'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { selectEmpAuth } from '../../redux/features/employeeAuthSlice'
 function EmployeeLeave() {
-  return (
-    <Box sx={{ display: 'flex'}}>
-    <EmpHome/>
-    <Box component="main" sx={{ flexGrow: 1, p: 10,pl:0 }}>
+  const navigate =useNavigate()
+const token =useSelector(selectEmpAuth)
 
-     <Empleave/>
+React.useEffect(() => {
+  if (!token.token.token) {
+    navigate('/employee');
+  }
+}, [token.token.token, navigate]);
+
+if (!token.token.token) {
+  return null; // or render a loading state if needed
+}
  
+
+      return (
+        <Box sx={{ display: 'flex'}}>
+        <EmpHome/>
+        <Box component="main" sx={{ flexGrow: 1, p: 10,pl:0 }}>
+    
+         <Empleave/>
+     
+        </Box>
     </Box>
-</Box>
-  )
+      )
+
+ 
 }
 
 export default EmployeeLeave
