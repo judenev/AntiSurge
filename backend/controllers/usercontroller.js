@@ -16,11 +16,11 @@ module.exports = {
             const isEmail = await User.findOne({ 'email': req.body.email })
 
 
-            if (isUser) {
+            if (isEmail) {
 
 
-                if (isUser.firstName == req.body.firstName && isUser.lastName == req.body.lastName) {
-                    if (isUser.email == req.body.email) {
+                if (isEmail.firstName == req.body.firstName && isUser.lastName == req.body.lastName) {
+                    if (isEmail.email == req.body.email) {
 
                         resolve({ email: true })
                     } else {
