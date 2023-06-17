@@ -26,22 +26,15 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 db()
-app.use(function(req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  next();
-});
 const cors = require('cors');
+app.use(function(req, res, next) {
+	  res.setHeader('Access-Control-Allow-Origin', '*');
+	  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+	  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+	  res.setHeader('Access-Control-Allow-Credentials', true);
+	  next();
+});
 
-const corsOptions ={
-    origin:'http://localhost:3000', 
-    credentials:true,            //access-control-allow-credentials:true
-    optionSuccessStatus:200
-}
-
-app.use(cors(corsOptions));
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
 app.use('/employee',employRouter)
@@ -54,7 +47,7 @@ app.use(function(req, res, next) {
 
 const io = new Server(server,{
   cors:{
-    origin:"http://localhost:3000",
+    origin:"*",
     methods:["GET","POST"]
 
   }
