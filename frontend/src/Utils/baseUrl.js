@@ -1,2 +1,3 @@
-const BaseURL ='http://localhost:3001/admin'
+// const BaseURLr ='http://anti-surge.site/admin'
+const BaseURL ='http://anti-surge.site/admin'
 export default BaseURL

@@ -1,2 +1,4 @@
-const empUrl ='http://localhost:3001/employee/'
+// const empUrlr ='http://anti-surge.site/employee/'
+const empUrl ='http://anti-surge.site/employee/'
+
 export default empUrl
