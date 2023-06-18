@@ -8,19 +8,20 @@ module.exports = {
 
     userReg: async (req, res) => {
         return new Promise(async (resolve, reject) => {
+            console.log(req.body);
             req.body.password = await bcrypt.hash(req.body.password, 10)
             req.body.confirmpassword = ''
 
             const newUser = new User(req.body)
-
+            const isUser =await User.findOne({firstName:req.body.firstname})
             const isEmail = await User.findOne({ 'email': req.body.email })
 
 
-            if (isEmail) {
+            if (isUser) {
 
 
-                if (isEmail.firstName == req.body.firstName && isUser.lastName == req.body.lastName) {
-                    if (isEmail.email == req.body.email) {
+                if (isUser.firstName == req.body.firstName && isUser.lastName == req.body.lastName) {
+                    if (isUser.email == req.body.email) {
 
                         resolve({ email: true })
                     } else {

@@ -60,7 +60,7 @@ import AdminWarranty from './pages/admin/AdminWarranty';
 import UserWarranty from './pages/UserWarranty';
 import AdminCompletejobs from './Components/admin/AdminCompletejobs';
 
- const  socket = io.connect("http://localhost:3001")
+
 
 
 

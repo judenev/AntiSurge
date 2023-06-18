@@ -39,9 +39,10 @@ export default function UserLogin() {
     axios.post(`${USERBaseURL}userlogin`, values).then((resp) => {
       if (!resp.data.userverified) {
         setLogged(false)
+        navigate('/register')
       } else {
         dispatch(setUserToken(resp.data))
-        navigate('/Home')
+        navigate('/ongoingjob')
       }
 
 
