@@ -64,7 +64,8 @@ module.exports = {
             const obj = {
                 title: req.body.title,
                 Content: req.body.Content,
-                serviceType: 'Minorchecklist'
+                serviceType: 'Minorchecklist',
+                status: 'Recieved'
             }
 
             const addservice = new Adminservice(obj)
@@ -208,7 +209,8 @@ module.exports = {
             const obj = {
                 title: req.body.title,
                 Content: req.body.Content,
-                serviceType: 'Majorchecklist'
+                serviceType: 'Majorchecklist',
+                status: 'Recieved'
             }
 
             const addservice = new Adminservice(obj)
@@ -218,7 +220,6 @@ module.exports = {
 
             console.log(err);
         }
-
 
 
 
