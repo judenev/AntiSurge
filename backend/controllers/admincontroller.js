@@ -509,7 +509,24 @@ module.exports = {
         }
     },
 
+ongoing: async (req, res) => {
+    try {
+      const pageNo = req.params.page
+      const totalJobs = await UserJob.find({}).where({
+        'Approved': false,
+      }).count()
+      const Ongoing = await UserJob.find({}).where({
+        'Approved': false,
+      }).skip(pageNo * 5).limit(5)
 
+      res.status(200).json({
+        data: Ongoing,
+        count: totalJobs
+      })
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
 
 }

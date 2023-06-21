@@ -76,6 +76,7 @@ export default function EmpLeave() {
         
             data && show();
             formik.resetForm();
+            setHalf(false)
         }else{
        
 

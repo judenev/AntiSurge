@@ -37,7 +37,7 @@ router.get('/nonallocated',adminhelpers.nonallocated)
 router.get('/allchecks',adminhelpers.Allchecks)
 router.get('/jobstatus',adminhelpers.jobstatuscheck)
 router.get('/jobcategory',adminhelpers.jobcategory)
-
+router.get('/ongoingjobs/:page',adminhelpers.ongoing)
 /* ADMIN JOB ESTIMATION CREATION*/
 
 router.post('/userestimation',adminhelpers.customerEstimation)
