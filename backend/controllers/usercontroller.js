@@ -302,7 +302,7 @@ module.exports = {
             const r = await axios.put(
                 "https://api.chatengine.io/users/",
                 { username: username, secret: username, first_name: username },
-                { headers: { "Private-Key": '16438858-333c-4aad-bdc9-74d488ff9f46' } }
+                { headers: { "Private-Key": '2dc9354c-c879-431c-98e2-c708b97a3dc1' } }
             );
             console.log("status", r);
             return res.status(r.status).json(r.data);
