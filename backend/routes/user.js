@@ -10,6 +10,7 @@ router.get('/', function (req, res, next) {
 /*  USER LOGIN MANAGEMENT. */
 router.post('/userlogin', userHelper.userLogin)
 router.post('/userreg',userHelper.userReg)
+router.get("/userverify/:num",userHelper.ver)
 /*======================================================*/
 
 
