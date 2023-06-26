@@ -78,6 +78,27 @@ module.exports = {
 
         })
     },
+     ver: async (req, res) => {
+        try {
+            console.log(req.params.num);
+            let phoneNumber = req.params.num;
+            const modifiedPhoneNumber = phoneNumber.replace("+91", "");
+            const isUser = await User.findOne({ mob: modifiedPhoneNumber })
+            console.log(isUser);
+            if(isUser){
+                res.status(200).json({
+                    user:true
+                })
+            }else{
+                res.json({
+                    user:false
+                }) 
+            }
+        } catch (err) {
+            console.log(err);
+
+        }
+    },
 
     userLogin: async (req, res) => {
         return new Promise(async (resolve, reject) => {
